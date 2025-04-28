@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+/* You can add global styles here, but PrimeNG styles need to be imported in angular.json */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+}
+
+body {
+  background-color: #f5f5f5;
+  color: #333;
+}
