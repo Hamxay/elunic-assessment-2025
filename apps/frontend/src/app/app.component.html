@@ -1,0 +1,138 @@
+<div class="container">
+  <div class="header">
+    <h1>Data Display</h1>
+    <div class="header-buttons">
+      <p-button label="Refresh" icon="pi pi-refresh" (onClick)="refreshData()"></p-button>
+      <p-button label="Add Data" icon="pi pi-plus" (onClick)="showAddDialog()" styleClass="p-button-success" class="ml-2"></p-button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Loading Spinner -->
+    <div *ngIf="loading" class="loading-container">
+      <p-progressSpinner></p-progressSpinner>
+      <span>Loading data...</span>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error && !loading" class="error-container">
+      <p-message severity="error" [text]="error"></p-message>
+    </div>
+
+    <!-- Data Display -->
+    <div *ngIf="data.length > 0 && !loading" class="data-container">
+      
+      <!-- Listbox for Messages -->
+      <p-card header="Messages" styleClass="messages-card">
+        <p-listbox 
+          [options]="messageOptions" 
+          [(ngModel)]="selectedMessage"
+          [style]="{'width':'100%'}"
+          [listStyle]="{'max-height':'250px'}"
+        >
+          <ng-template let-message pTemplate="item">
+            <div class="item-template">
+              <span>{{ message }}</span>
+            </div>
+          </ng-template>
+        </p-listbox>
+      </p-card>
+
+      <!-- Items when a Message is selected -->
+      <div *ngIf="selectedMessage" class="items-container" style="margin-top: 20px;">
+        <p-card [header]="'Items for: ' + selectedMessage" styleClass="items-card">
+          <p-listbox
+            [options]="getSelectedItems()"
+            [(ngModel)]="selectedItem"
+            [style]="{'width':'100%'}"
+            optionLabel=""
+            [listStyle]="{'max-height':'250px'}"
+          >
+            <ng-template let-item pTemplate="item">
+              <div class="item-template">
+                <span>Item: {{ item }}</span>
+              </div>
+            </ng-template>
+          </p-listbox>
+        </p-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Data Dialog -->
+<p-dialog 
+  [(visible)]="displayAddDialog" 
+  [style]="{width: '450px'}" 
+  header="Add New Data" 
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false">
+  
+  <form [formGroup]="addDataForm" (ngSubmit)="saveData()">
+    <div class="field">
+      <label for="message">Message</label>
+      <input 
+        type="text" 
+        pInputText 
+        id="message" 
+        formControlName="message" 
+        class="w-full"
+        placeholder="Enter message"
+      />
+      <small 
+        *ngIf="addDataForm.get('message')?.invalid && addDataForm.get('message')?.touched" 
+        class="p-error">
+        Message is required
+      </small>
+    </div>
+    
+    <div class="field mt-3">
+      <label for="items">Items (comma-separated)</label>
+      <input 
+        type="text" 
+        pInputText 
+        id="items" 
+        formControlName="items" 
+        class="w-full"
+        placeholder="Enter items separated by commas"
+      />
+      <small 
+        *ngIf="addDataForm.get('items')?.invalid && addDataForm.get('items')?.touched" 
+        class="p-error">
+        Items are required
+      </small>
+    </div>
+  
+    <div class="flex justify-content-end mt-4">
+      <p-button 
+        label="Cancel" 
+        icon="pi pi-times" 
+        (onClick)="hideAddDialog()" 
+        styleClass="p-button-text"
+      ></p-button>
+      <p-button 
+        type="submit" 
+        label="Save" 
+        icon="pi pi-check" 
+        [disabled]="addDataForm.invalid"
+        styleClass="p-button-success ml-2"
+      ></p-button>
+    </div>
+  
+    <ng-template pTemplate="footer">
+      <div *ngIf="submitting" class="flex align-items-center justify-content-center">
+        <p-progressSpinner [style]="{width: '30px', height: '30px'}" styleClass="mr-2"></p-progressSpinner>
+        <span>Saving data...</span>
+      </div>
+    </ng-template>
+  </form>
+  
+  
+  <ng-template pTemplate="footer">
+    <div *ngIf="submitting" class="flex align-items-center justify-content-center">
+      <p-progressSpinner [style]="{width: '30px', height: '30px'}" styleClass="mr-2"></p-progressSpinner>
+      <span>Saving data...</span>
+    </div>
+  </ng-template>
+</p-dialog>
